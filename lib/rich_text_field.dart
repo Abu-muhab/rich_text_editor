@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 GlobalKey<RichTextFieldState> richTextFieldKey = GlobalKey();
 
@@ -88,6 +89,28 @@ class RichTextFieldController extends TextEditingController {
           ? TextSelection.collapsed(offset: modifiedText.length)
           : newValue.selection,
     );
+
+    int formerSpanLength = value.text.split(" ").length;
+    int currentSpanLength = modifiedVal.text.split(" ").length;
+
+    //checks if a span has been removed and delete the corresponding style
+    if (formerSpanLength > currentSpanLength) {
+      List<String> formerSpans = value.text.split(" ");
+      List<String> currentSpans = modifiedVal.text.split(" ");
+
+      int styleIndexToBeRemoved = -1;
+      for (int x = 0; x < currentSpanLength; x++) {
+        if (currentSpans[x] != formerSpans[x]) {
+          styleIndexToBeRemoved = x;
+          break;
+        }
+      }
+
+      if (styleIndexToBeRemoved > -1) {
+        spanStyles.removeAt(styleIndexToBeRemoved);
+      }
+    }
+
     super.value = modifiedVal;
     print(newValue.text);
     if (newValue.text.length == 0) {
