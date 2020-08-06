@@ -19,7 +19,7 @@ class RichTextFieldState extends State<RichTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       decoration: InputDecoration.collapsed(hintText: "Body"),
       expands: true,
@@ -66,7 +66,29 @@ class RichTextFieldController extends TextEditingController {
 
   @override
   set value(TextEditingValue newValue) {
-    super.value = newValue;
+    bool shitCursor = false;
+    String append = "";
+    try {
+      //after regex replace, the last character gets removed
+      //the last character is appended back after replacement
+      String temp = newValue.text.replaceAll(RegExp("[ \n]"), "");
+      append = temp[temp.length - 1];
+    } catch (err) {}
+    String modifiedText =
+        newValue.text.replaceAll(RegExp("[^ \n]\n"), "$append \n");
+    if (newValue.text != modifiedText) {
+      shitCursor = true;
+    }
+    TextEditingValue modifiedVal = TextEditingValue(
+      text: modifiedText,
+      composing: shitCursor == true
+          ? TextRange.collapsed(modifiedText.length)
+          : newValue.composing,
+      selection: shitCursor == true
+          ? TextSelection.collapsed(offset: modifiedText.length)
+          : newValue.selection,
+    );
+    super.value = modifiedVal;
     print(newValue.text);
     if (newValue.text.length == 0) {
       spanStyles = new List();
