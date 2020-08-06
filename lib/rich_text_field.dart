@@ -66,7 +66,7 @@ class RichTextFieldController extends TextEditingController {
 
   @override
   set value(TextEditingValue newValue) {
-    bool shitCursor = false;
+    bool shiftCursor = false;
     String append = "";
     try {
       //after regex replace, the last character gets removed
@@ -77,14 +77,14 @@ class RichTextFieldController extends TextEditingController {
     String modifiedText =
         newValue.text.replaceAll(RegExp("[^ \n]\n"), "$append \n");
     if (newValue.text != modifiedText) {
-      shitCursor = true;
+      shiftCursor = true;
     }
     TextEditingValue modifiedVal = TextEditingValue(
       text: modifiedText,
-      composing: shitCursor == true
+      composing: shiftCursor == true
           ? TextRange.collapsed(modifiedText.length)
           : newValue.composing,
-      selection: shitCursor == true
+      selection: shiftCursor == true
           ? TextSelection.collapsed(offset: modifiedText.length)
           : newValue.selection,
     );
